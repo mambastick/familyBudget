@@ -10,6 +10,7 @@ COPY backend/app/api/web/router.py /app/backend/app/api/web/router.py
 COPY backend/app/api/v1/router.py /app/backend/app/api/v1/router.py
 COPY backend/app/api/v1/endpoints/oidc.py /app/backend/app/api/v1/endpoints/oidc.py
 COPY backend/db/migrations/versions/20261006_nlv000000001_add_oidc_subject.py /app/backend/db/migrations/versions/20261006_nlv000000001_add_oidc_subject.py
+COPY frontend/web/templates/base.html /app/frontend/web/templates/base.html
 
 LABEL org.opencontainers.image.source="https://github.com/mambastick/familyBudget" \
       org.opencontainers.image.description="Family Budget with Authentik OIDC for neelov.family"

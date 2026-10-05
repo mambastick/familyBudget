@@ -6,6 +6,7 @@ on:
     paths:
       - Dockerfile.neelov
       - backend/app/**
+      - frontend/web/templates/base.html
       - backend/db/migrations/versions/20261006_nlv000000001_add_oidc_subject.py
       - .github/workflows/neelov-oidc-image.yml
   workflow_dispatch:
