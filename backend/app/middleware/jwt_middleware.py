@@ -59,6 +59,7 @@ class JWTAuthMiddleware(BaseHTTPMiddleware):
         "/favicon.ico",  # Browser favicon
         "/manifest.json",  # PWA manifest (required for install prompt)
         "/sw.min.js",  # Service Worker minified (required for PWA caching)
+        "/sw.js",  # Retire Actual Budget's old service worker after cutover
         # Email/2FA authentication pages (public)
         "/register",  # Email registration page
         "/login-email",  # Email login page
