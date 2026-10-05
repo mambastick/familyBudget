@@ -1,0 +1,16 @@
+# Neelov deployment: pin the upstream binary and copy only reviewed OIDC changes.
+FROM ghcr.io/ikeniborn/familybudget-backend@sha256:402b251624b6e664c19b727ba413e2879573f16e91294a3fc8e0f5c189993974
+
+COPY backend/app/core/config.py /app/backend/app/core/config.py
+COPY backend/app/models/user.py /app/backend/app/models/user.py
+COPY backend/app/services/jwt.py /app/backend/app/services/jwt.py
+COPY backend/app/main.py /app/backend/app/main.py
+COPY backend/app/middleware/jwt_middleware.py /app/backend/app/middleware/jwt_middleware.py
+COPY backend/app/api/web/router.py /app/backend/app/api/web/router.py
+COPY backend/app/api/v1/router.py /app/backend/app/api/v1/router.py
+COPY backend/app/api/v1/endpoints/oidc.py /app/backend/app/api/v1/endpoints/oidc.py
+COPY backend/db/migrations/versions/20261006_nlv000000001_add_oidc_subject.py /app/backend/db/migrations/versions/20261006_nlv000000001_add_oidc_subject.py
+COPY frontend/web/templates/base.html /app/frontend/web/templates/base.html
+
+LABEL org.opencontainers.image.source="https://github.com/mambastick/familyBudget" \
+      org.opencontainers.image.description="Family Budget with Authentik OIDC for neelov.family"

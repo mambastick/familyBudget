@@ -138,6 +138,9 @@ class User(SQLModel, table=True):
         description="User email for email-based auth (unique via partial index, nullable for Telegram-only)"
     )
 
+    # Stable Authentik identity. Email may change and must not link accounts.
+    oidc_sub: str | None = Field(default=None, max_length=255, index=True, unique=True)
+
     # Password (Argon2 hash, required for email auth)
     password_hash: str | None = Field(
         default=None,

@@ -1,7 +1,7 @@
 from contextlib import asynccontextmanager
 from pathlib import Path
 
-from fastapi import FastAPI
+from fastapi import FastAPI, Response
 from fastapi.exceptions import HTTPException, RequestValidationError
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
@@ -121,7 +121,7 @@ async def lifespan(app: FastAPI):
     logger.info("WebSocket cleanup task started successfully")
 
     # Auto-fetch Telegram bot username if not configured
-    if settings.TELEGRAM_BOT_USERNAME is None:
+    if settings.TELEGRAM_BOT_TOKEN and settings.TELEGRAM_BOT_USERNAME is None:
         logger.info("TELEGRAM_BOT_USERNAME not configured, fetching from Telegram API...")
         from backend.app.services.telegram_auth import get_bot_username
 
@@ -358,6 +358,29 @@ register_filters(templates.env)
 templates.env.globals["config"] = get_settings()
 
 # PWA endpoints (must be before web_router to avoid being caught by catch-all routes)
+# Actual Budget registered /sw.js for the same origin. Serve a final worker at
+# that URL so existing browsers retire its offline cache after the host cutover.
+@app.api_route("/sw.js", methods=["GET", "HEAD"], include_in_schema=False)
+async def retire_actual_service_worker():
+    script = """
+self.addEventListener('install', () => self.skipWaiting());
+self.addEventListener('activate', event => {
+  event.waitUntil((async () => {
+    const keys = await caches.keys();
+    await Promise.all(keys.map(key => caches.delete(key)));
+    const windows = await clients.matchAll({type: 'window', includeUncontrolled: true});
+    await self.registration.unregister();
+    await Promise.all(windows.map(window => window.navigate('/')));
+  })());
+});
+"""
+    return Response(
+        content=script,
+        media_type="application/javascript",
+        headers={"Cache-Control": "no-cache, no-store, must-revalidate",
+                 "Service-Worker-Allowed": "/"},
+    )
+
 # Support both GET and HEAD methods - browsers use HEAD to check for Service Worker updates
 @app.api_route("/sw.min.js", methods=["GET", "HEAD"], include_in_schema=False)
 async def service_worker():

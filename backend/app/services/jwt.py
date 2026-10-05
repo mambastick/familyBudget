@@ -42,7 +42,7 @@ settings = get_settings()
 ALGORITHM = "HS256"
 SECRET_KEY = settings.JWT_SECRET
 ACCESS_TOKEN_EXPIRE_DAYS = settings.JWT_EXPIRE_DAYS
-REFRESH_TOKEN_EXPIRE_DAYS = 30  # Refresh tokens live longer
+REFRESH_TOKEN_EXPIRE_DAYS = 1 if settings.OIDC_ONLY else 30
 
 # Token type claim values. A refresh token carries a user_id claim, so without
 # this discriminator it decodes as a valid access token — see _is_access_claims.

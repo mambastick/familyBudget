@@ -72,10 +72,19 @@ class Settings(BaseSettings):
     JWT_EXPIRE_DAYS: int = 7
 
     # Telegram
-    TELEGRAM_BOT_TOKEN: str
+    TELEGRAM_BOT_TOKEN: str = ""
     TELEGRAM_BOT_USERNAME: str | None = None  # Bot username for Telegram Login Widget (e.g., "ikenibornbudgetbot")
     # Note: If not provided, will be auto-fetched from Telegram API at startup
-    ADMIN_TELEGRAM_ID: int  # Telegram ID of the admin user
+    ADMIN_TELEGRAM_ID: int = 0  # Telegram ID of the admin user; 0 disables bootstrap
+
+    # Authentik OIDC (optional; OIDC_ONLY closes the legacy login methods)
+    OIDC_DISCOVERY_URL: str | None = None
+    OIDC_CLIENT_ID: str | None = None
+    OIDC_CLIENT_SECRET: str | None = None
+    OIDC_REDIRECT_URI: str | None = None
+    OIDC_ONLY: bool = False
+    OIDC_USERS_GROUP: str = "app-familybudget-users"
+    OIDC_ADMINS_GROUP: str = "app-familybudget-admins"
     TELEGRAM_PROXY_URL: str | None = None  # Optional HTTPS/HTTP/SOCKS5 proxy for Telegram API (e.g. https://[CREDENTIALS]@host:port)
 
     # Admin Email Authentication (optional - emergency access without 2FA)
