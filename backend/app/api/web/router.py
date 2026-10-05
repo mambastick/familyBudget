@@ -28,7 +28,9 @@ async def index(
 
     # Redirect unauthenticated users to login page
     if not current_user:
-        return RedirectResponse(url="/login-email", status_code=303)
+        from backend.app.core.config import get_settings
+        login_url = "/api/v1/auth/oidc-login" if get_settings().OIDC_ONLY else "/login-email"
+        return RedirectResponse(url=login_url, status_code=303)
 
     return templates.TemplateResponse(
         "index.html",

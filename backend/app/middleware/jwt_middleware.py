@@ -22,9 +22,10 @@ from starlette.middleware.base import BaseHTTPMiddleware
 
 from backend.app.core.json_utils import ORJSONResponse
 from backend.app.services.jwt import decode_access_token_full
+from backend.app.core.config import get_settings
 
 # Login page URL for redirects
-LOGIN_URL = "/api/v1/auth/telegram-login"
+LOGIN_URL = "/api/v1/auth/oidc-login" if get_settings().OIDC_ONLY else "/api/v1/auth/telegram-login"
 
 
 class JWTAuthMiddleware(BaseHTTPMiddleware):
@@ -101,6 +102,21 @@ class JWTAuthMiddleware(BaseHTTPMiddleware):
         Returns:
             Response: HTTP response from endpoint or 401 error
         """
+        # Close legacy public login routes when Authentik is the sole login method.
+        if get_settings().OIDC_ONLY:
+            path = request.url.path
+            if path.startswith("/api/v1/auth/") and path not in {
+                "/api/v1/auth/oidc-login", "/api/v1/auth/oidc-callback",
+                "/api/v1/auth/logout", "/api/v1/auth/refresh",
+            }:
+                return ORJSONResponse(status_code=404, content={"detail": "Not found"})
+            if path in {"/login-email", "/register", "/2fa-verify", "/2fa-setup-login"}:
+                return RedirectResponse(url=LOGIN_URL, status_code=303)
+            if path.startswith("/api/v1/webauthn/authenticate/"):
+                return ORJSONResponse(status_code=404, content={"detail": "Not found"})
+            if path.startswith("/api/v1/webapp/"):
+                return ORJSONResponse(status_code=404, content={"detail": "Not found"})
+
         # Always try to extract JWT token (even for public endpoints)
         token = self._extract_token(request)
 

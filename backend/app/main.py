@@ -121,7 +121,7 @@ async def lifespan(app: FastAPI):
     logger.info("WebSocket cleanup task started successfully")
 
     # Auto-fetch Telegram bot username if not configured
-    if settings.TELEGRAM_BOT_USERNAME is None:
+    if settings.TELEGRAM_BOT_TOKEN and settings.TELEGRAM_BOT_USERNAME is None:
         logger.info("TELEGRAM_BOT_USERNAME not configured, fetching from Telegram API...")
         from backend.app.services.telegram_auth import get_bot_username
 

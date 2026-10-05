@@ -49,6 +49,7 @@ from backend.app.api.v1.endpoints import (
     webauthn_router,
 )
 from backend.app.api.v1.endpoints.admin_logs import router as admin_logs_router
+from backend.app.api.v1.endpoints.oidc import router as oidc_router
 from backend.app.api.v1.export import router as export_router
 from backend.app.api.v1.webapp import router as webapp_router
 
@@ -56,6 +57,7 @@ api_router = APIRouter(prefix="/api/v1")
 
 # Authentication endpoints (TASK-012) ✅
 api_router.include_router(auth_router)
+api_router.include_router(oidc_router)
 
 # WebAuthn Biometric Authentication endpoints (v6.5.0+) ✅
 api_router.include_router(webauthn_router)
